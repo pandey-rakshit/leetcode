@@ -8,9 +8,9 @@ A comprehensive collection of LeetCode problem solutions with detailed explanati
 
 ### String Problems
 
-| # | Problem | Difficulty | Topics | Solution | LeetCode | Hint |
-|---|---------|------------|--------|----------|----------|------|
-| 6 | [Zigzag Conversion](String/6.%20Zigzag%20Conversion/) | 🟡 Medium | String, Math | [View Solution](String/6.%20Zigzag%20Conversion/README.md#Approaches) | [Try on LeetCode](https://leetcode.com/problems/zigzag-conversion/) | Simulate the zigzag pattern: Use a list for each row. Iterate through the string, placing each character in the current row. Track direction (down/up) and change it when reaching the top or bottom row. |
+| # | Problem | Difficulty | Topics | LeetCode | Hint |
+|---|---------|------------|--------|----------|------|
+| 6 | [Zigzag Conversion](String/6.%20Zigzag%20Conversion/) | 🟡 Medium | String, Math | [Try on LeetCode](https://leetcode.com/problems/zigzag-conversion/) | Track row movement in zigzag fashion. |
 
 ---
 

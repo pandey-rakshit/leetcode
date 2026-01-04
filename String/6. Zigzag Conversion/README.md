@@ -1,18 +1,16 @@
-# 6. Zigzag Conversion
+# 🧩 Zigzag Conversion – LeetCode #6
 
-### **[Try on LeetCode](https://leetcode.com/problems/zigzag-conversion/)**
-
-| | |
-|---|---|
-| **Status** | ✅ Solved |
-| **Difficulty** | 🟡 Medium |
-| **Topics** | String, Mathematics |
+[![LeetCode](https://img.shields.io/badge/LeetCode-Solved-success)](https://leetcode.com/problems/zigzag-conversion/)
+![Difficulty](https://img.shields.io/badge/Difficulty-Medium-yellow)
+![Language](https://img.shields.io/badge/Language-Python-blue)
 
 ---
 
-## Description
+## 📌 Problem Overview
 
-The string `"PAYPALISHIRING"` is written in a zigzag pattern on a given number of rows like this:
+The **Zigzag Conversion** problem asks us to rearrange a string written in a zigzag pattern across a given number of rows, then read it row by row.
+
+### Example (numRows = 3)
 
 ```
 P   A   H   N
@@ -20,9 +18,19 @@ A P L S I I G
 Y   I   R
 ```
 
-And then read line by line: `"PAHNAPLSIIGYIR"`
+Output:
 
-Write the code that will take a string and make this conversion given a number of rows:
+```
+PAHNAPLSIIGYIR
+```
+
+---
+
+## 🧠 Problem Statement
+
+Given a string `s` and an integer `numRows`, write the characters of `s` in a zigzag pattern across `numRows` rows, then read the result line by line.
+
+### Function Signature
 
 ```cpp
 string convert(string s, int numRows);
@@ -30,197 +38,230 @@ string convert(string s, int numRows);
 
 ---
 
-## Examples
+## 🧪 Examples
 
 ### Example 1
+
 ```
-Input: s = "PAYPALISHIRING", numRows = 3
+Input:  s = "PAYPALISHIRING", numRows = 3
 Output: "PAHNAPLSIIGYIR"
 ```
 
 ### Example 2
-```
-Input: s = "PAYPALISHIRING", numRows = 4
-Output: "PINALSIGYAHRPI"
 
-Explanation:
-P     I    N
-A   L S  I G
-Y A   H R
-P     I
+```
+Input:  s = "PAYPALISHIRING", numRows = 4
+Output: "PINALSIGYAHRPI"
 ```
 
 ### Example 3
+
 ```
-Input: s = "A", numRows = 1
+Input:  s = "A", numRows = 1
 Output: "A"
 ```
 
 ---
 
-## Constraints
+## 📋 Constraints
 
-- `1 <= s.length <= 1000`
-- `s` consists of English letters (lower-case and upper-case), `','` and `'.'`
-- `1 <= numRows <= 1000`
+* `1 <= s.length <= 1000`
+* `s` contains English letters (upper & lower case), `','` and `'.'`
+* `1 <= numRows <= 1000`
 
 ---
 
 <details>
-<summary>💡 Hint - Click to view</summary>
+<summary><b>💡 Key Insight (Click to expand)</b></summary>
 
-Think about the zigzag pattern as a cycle:
-- Characters cycle through rows with a repeating pattern
-- The cycle length is `2 * (numRows - 1)`
-- For each row, identify which indices fall into that row
-- Track direction: going down (row increases) or going up (row decreases)
-- Use the modulo operation to determine which row a character belongs to
+* Zigzag follows a **repeating cycle**
+* Cycle length = `2 × (numRows − 1)`
+* Characters move:
 
-**Tip**: Try simulating the zigzag pattern by tracking the current row and direction as you iterate through the string.
+  * straight down
+  * then diagonally up
+* First & last rows follow a simple pattern
+* Middle rows receive **two characters per cycle**
 
 </details>
 
 ---
 
 <details>
-<summary>📝 Approach & Solution</summary>
+<summary><b>📝 Approach & Solution</b></summary>
 
-## Approaches
+---
 
-### Approach 1: Simulation (String Concatenation)
+### 🔹 Approach 1: Simulation (Row Traversal)
 
-**Idea**: Simulate the zigzag pattern by tracking direction and row position, then concatenate rows.
+**Idea**
+Simulate the zigzag movement by tracking:
 
-**Advantage**: Easy to understand and visualize the zigzag pattern  
-**Disadvantage**: String concatenation (`+=`) creates new string objects each iteration, causing **hidden O(n²) overhead** due to string immutability in Python
+* current row
+* direction (down / up)
 
-**Steps**:
-1. Handle edge case: if `numRows == 1`, return string as is
-2. Create a list to store characters for each row
-3. Iterate through the string:
-   - Add character to current row
-   - Change direction when reaching top (row 0) or bottom (row numRows-1)
-   - Move to next row based on direction
-4. Join all rows to get result
+Characters are appended row-wise and combined at the end.
 
-**Stated Time Complexity**: O(n) (but O(n²) in practice due to string concatenation)  
-**Space Complexity**: O(n)
+**Pros**
+
+* Very intuitive
+* Easy to visualize
+
+**Cons**
+
+* Uses string concatenation (`+=`)
+* Causes hidden **O(n²)** cost in Python
+
+**Steps**
+
+* Handle edge case (`numRows == 1`)
+* Create one container per row
+* Traverse characters while switching direction
+* Join all rows
+
+**Complexity**
+
+* Time: O(n) *(O(n²) in practice)*
+* Space: O(n)
 
 ```python
 def convert(s: str, numRows: int) -> str:
     if numRows == 1:
         return s
-    
+
     rows = ['' for _ in range(numRows)]
-    current_row = 0
-    going_down = True
-    
-    for char in s:
-        rows[current_row] += char
-        
-        # Change direction at top or bottom
-        if current_row == 0:
-            going_down = True
-        elif current_row == numRows - 1:
-            going_down = False
-        
-        # Move to next row
-        current_row += 1 if going_down else -1
-    
+    row, step = 0, 1
+
+    for ch in s:
+        rows[row] += ch
+        if row == 0:
+            step = 1
+        elif row == numRows - 1:
+            step = -1
+        row += step
+
     return ''.join(rows)
 ```
 
 ---
 
-### Approach 2: Direct Index Calculation (List Append)
+### 🔹 Approach 2: Direct Index Calculation (Optimized)
 
-**Idea**: Use math to directly determine which indices belong to each row, then collect them using list append.
+**Idea**
+Instead of simulating movement, directly compute which indices belong to each row using math.
 
-**Advantage**: Avoids string concatenation - uses list append which is O(1) amortized. **True O(n) time complexity**  
-**Disadvantage**: Less intuitive - requires understanding the mathematical pattern
+**Key Insight**
 
-**Pattern Analysis**:
-- Cycle length = `2 * (numRows - 1)`
-- For first and last rows: characters appear at intervals of cycle length
-- For middle rows: characters appear in a diagonal pattern within each cycle
+```
+cycle = 2 × (numRows − 1)
+```
 
-**Steps**:
-1. Handle edge case: if `numRows == 1`, return string
-2. Calculate cycle length
-3. For each row, calculate which indices fall in that row using the pattern
-4. Append characters at those indices to a list and join
+**Row Rules**
 
-**Time Complexity**: O(n)  
-**Space Complexity**: O(n)
+* First & last rows → fixed step
+* Middle rows → two characters per cycle
+
+**Pros**
+
+* No string concatenation
+* True **O(n)** time complexity
+
+**Cons**
+
+* Less intuitive than simulation
+
+**Complexity**
+
+* Time: O(n)
+* Space: O(n)
 
 ```python
 def convert(s: str, numRows: int) -> str:
     if numRows == 1:
         return s
-    
+
     cycle = 2 * (numRows - 1)
-    result = []
-    
+    res = []
+
     for row in range(numRows):
-        if row == 0 or row == numRows - 1:
-            # First and last row: simple arithmetic progression
-            for i in range(row, len(s), cycle):
-                result.append(s[i])
-        else:
-            # Middle rows: two characters per cycle
-            for i in range(row, len(s), cycle):
-                result.append(s[i])
-                # Diagonal character in the same cycle
-                diagonal = i + cycle - 2 * row
-                if diagonal < len(s):
-                    result.append(s[diagonal])
-    
-    return ''.join(result)
+        for i in range(row, len(s), cycle):
+            res.append(s[i])
+            diag = i + cycle - 2 * row
+            if row not in (0, numRows - 1) and diag < len(s):
+                res.append(s[diag])
+
+    return ''.join(res)
 ```
 
-**Example of Pattern**:
-- For numRows = 3, cycle = 4
-- Row 0: indices 0, 4, 8, 12, ... (step by 4)
-- Row 1: indices (1, 3), (5, 7), (9, 11), (13, ...) (pairs in cycle)
-- Row 2: indices 2, 6, 10, 14, ... (step by 4)
+---
+
+### 📌 Pattern Example (`numRows = 3`)
+
+* Cycle = 4
+* Row 0 → `0, 4, 8, 12`
+* Row 1 → `(1, 3), (5, 7), (9, 11)`
+* Row 2 → `2, 6, 10, 14`
+
+---
 
 </details>
 
 ---
 
 <details>
-<summary>🔍 Detailed Walkthrough</summary>
+<summary><b>🔍 Step-by-Step Walkthrough</b></summary>
 
-### Example: s = "PAYPALISHIRING", numRows = 3
+### Input
 
-**Step 1**: Initialize
-- rows = ["", "", ""]
-- current_row = 0
-- going_down = True
-
-**Step 2**: Iterate through string
 ```
-Index 0, char 'P': rows[0] = "P", going_down = True, next_row = 1
-Index 1, char 'A': rows[1] = "A", going_down = True, next_row = 2
-Index 2, char 'Y': rows[2] = "Y", going_down = False (at bottom), next_row = 1
-Index 3, char 'P': rows[1] = "AP", going_down = False, next_row = 0
-Index 4, char 'A': rows[0] = "PA", going_down = True (at top), next_row = 1
-Index 5, char 'L': rows[1] = "APL", going_down = True, next_row = 2
-Index 6, char 'I': rows[2] = "YI", going_down = False (at bottom), next_row = 1
-Index 7, char 'S': rows[1] = "APLS", going_down = False, next_row = 0
-Index 8, char 'H': rows[0] = "PAH", going_down = True (at top), next_row = 1
-Index 9, char 'I': rows[1] = "APLSI", going_down = True, next_row = 2
-Index 10, char 'R': rows[2] = "YIR", going_down = False (at bottom), next_row = 1
-Index 11, char 'I': rows[1] = "APLSII", going_down = False, next_row = 0
-Index 12, char 'N': rows[0] = "PAHN", going_down = True (at top), next_row = 1
-Index 13, char 'G': rows[1] = "APLSIIG", going_down = True, next_row = 2
+s = "PAYPALISHIRING"
+numRows = 3
 ```
 
-**Step 3**: Concatenate
-- rows[0] = "PAHN"
-- rows[1] = "APLSIIG"
-- rows[2] = "YIR"
-- Result = "PAHNAPLSIIGYIR" ✅
+### Row Construction
+
+```
+Row 0 → PAHN
+Row 1 → APLSIIG
+Row 2 → YIR
+```
+
+### Final Output
+
+```
+PAHNAPLSIIGYIR
+```
+
+✅ Correct result
 
 </details>
 
+---
+
+## 🧠 Takeaways
+
+* Simulation is **great for understanding**
+* Index-based approach is **best for performance**
+* Recognizing cycles simplifies many string problems
+* Always watch out for hidden string immutability costs in Python
+
+---
+
+## 🔗 References
+
+* 📘 LeetCode Problem:
+  [https://leetcode.com/problems/zigzag-conversion/](https://leetcode.com/problems/zigzag-conversion/)
+* 🧠 Topic Tags:
+  `String`, `Math`, `Pattern Simulation`
+
+---
+
+## ⭐ Final Notes
+
+If you found this explanation helpful:
+
+* ⭐ Star the repository
+* 🧩 Try solving it using another language
+* 🧠 Practice similar pattern problems
+
+Happy coding 🚀
